@@ -1,4 +1,4 @@
-import { View, ListView, Image, Text, Dimensions } from 'react-native';
+import { View, FlatView, Image, Text, Dimensions } from 'react-native';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Task from 'data.task';
@@ -229,15 +229,15 @@ export default class Masonry extends Component {
 	render() {
 		return (
 		<View style={{flex: 1}} onLayout={(event) => this._setParentDimensions(event)}>
-		<ListView
+		<FlatView
 			contentContainerStyle={styles.masonry__container}
-			dataSource={this.state.dataSource}
+			data={this.state.dataSource}
 			enableEmptySections
 			scrollRenderAheadDistance={100}
 			removeClippedSubviews={false}
 			onEndReached={this._delayCallEndReach}
 			onEndReachedThreshold={this.props.onEndReachedThreshold}
-			renderRow={(data, sectionId, rowID) => (
+			renderItem={(data) => (
 			<Column
 				data={data}
 				columns={this.props.columns}
@@ -246,8 +246,9 @@ export default class Masonry extends Component {
 				customImageComponent={this.props.customImageComponent}
 				customImageProps={this.props.customImageProps}
 				spacing={this.props.spacing}
-				key={`RN-MASONRY-COLUMN-${rowID}`} />
+				 />
 			)}
+			keyExtractor={item => item.id}
 			refreshControl={this.props.refreshControl} />
 		</View>
 		);
