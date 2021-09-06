@@ -1,4 +1,5 @@
-import { View, FlatView, Image, Text, Dimensions } from 'react-native';
+import { View, Image, Text, Dimensions } from 'react-native';
+import ListView from 'react-native-deprecated-listview';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Task from 'data.task';
@@ -60,7 +61,7 @@ export default class Masonry extends Component {
 	constructor(props) {
 		super(props);
 		// Assuming users don't want duplicated images, if this is not the case we can always change the diff check
-		//this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => !containMatchingUris(r1, r2) });
+		this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => !containMatchingUris(r1, r2) });
 		// This creates an array of [1..n] with values of 0, each index represent a column within the masonry
 		const columnHeights = generateColumnHeights(props.columns);
 		this.state = {
@@ -229,15 +230,15 @@ export default class Masonry extends Component {
 	render() {
 		return (
 		<View style={{flex: 1}} onLayout={(event) => this._setParentDimensions(event)}>
-		<FlatView
+		<ListView
 			contentContainerStyle={styles.masonry__container}
-			data={this.state.dataSource}
+			dataSource={this.state.dataSource}
 			enableEmptySections
 			scrollRenderAheadDistance={100}
 			removeClippedSubviews={false}
 			onEndReached={this._delayCallEndReach}
 			onEndReachedThreshold={this.props.onEndReachedThreshold}
-			renderItem={(data) => (
+			renderRow={(data, sectionId, rowID) => (
 			<Column
 				data={data}
 				columns={this.props.columns}
@@ -246,9 +247,9 @@ export default class Masonry extends Component {
 				customImageComponent={this.props.customImageComponent}
 				customImageProps={this.props.customImageProps}
 				spacing={this.props.spacing}
+				key={`RN-MASONRY-COLUMN-${rowID}`}
 				 />
 			)}
-			keyExtractor={item => item.id}
 			refreshControl={this.props.refreshControl} />
 		</View>
 		);
